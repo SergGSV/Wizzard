@@ -1,0 +1,191 @@
+<div class="stepper-container">
+  <mat-stepper [linear]="true" #stepper>
+
+    <!-- Крок 1: Вибір Source -->
+    <mat-step [stepControl]="firstFormGroup" label="Оберіть джерело">
+      <form [formGroup]="firstFormGroup">
+        <h2>Оберіть джерело даних (Source)</h2>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Пошук за назвою</mat-label>
+          <input
+            matInput
+            placeholder="Введіть назву для фільтрації"
+            (input)="filterSources($event)"
+            [value]="sourceFilter">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <div *ngIf="loading" class="loading-container">
+          <mat-spinner diameter="50"></mat-spinner>
+        </div>
+
+        <mat-selection-list
+          *ngIf="!loading"
+          [multiple]="false"
+          class="item-list">
+          <mat-list-option
+            *ngFor="let source of filteredSources"
+            [selected]="selectedSource?.id === source.id"
+            (click)="selectSource(source)"
+            class="list-item">
+            <div class="item-content">
+              <h3>{{ source.name }}</h3>
+              <p>{{ source.content }}</p>
+              <span class="item-id">ID: {{ source.id }}</span>
+            </div>
+          </mat-list-option>
+        </mat-selection-list>
+
+        <div *ngIf="!loading && filteredSources.length === 0" class="no-results">
+          <p>Не знайдено жодного джерела за вашим запитом</p>
+        </div>
+
+        <div class="selected-info" *ngIf="selectedSource">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Обрано:</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <strong>{{ selectedSource.name }}</strong>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="step-actions">
+          <button mat-raised-button color="primary" matStepperNext [disabled]="!selectedSource">
+            Далі
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Крок 2: Вибір Sink -->
+    <mat-step [stepControl]="secondFormGroup" label="Оберіть приймач">
+      <form [formGroup]="secondFormGroup">
+        <h2>Оберіть приймач даних (Sink)</h2>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Пошук за назвою</mat-label>
+          <input
+            matInput
+            placeholder="Введіть назву для фільтрації"
+            (input)="filterSinks($event)"
+            [value]="sinkFilter">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-selection-list
+          [multiple]="false"
+          class="item-list">
+          <mat-list-option
+            *ngFor="let sink of filteredSinks"
+            [selected]="selectedSink?.id === sink.id"
+            (click)="selectSink(sink)"
+            class="list-item">
+            <div class="item-content">
+              <h3>{{ sink.name }}</h3>
+              <p>{{ sink.content }}</p>
+              <span class="item-id">ID: {{ sink.id }}</span>
+            </div>
+          </mat-list-option>
+        </mat-selection-list>
+
+        <div *ngIf="filteredSinks.length === 0" class="no-results">
+          <p>Не знайдено жодного приймача за вашим запитом</p>
+        </div>
+
+        <div class="selected-info" *ngIf="selectedSink">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Обрано:</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <strong>{{ selectedSink.name }}</strong>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="step-actions">
+          <button mat-button matStepperPrevious>Назад</button>
+          <button mat-raised-button color="primary" matStepperNext [disabled]="!selectedSink">
+            Далі
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Крок 3: Summary -->
+    <mat-step label="Підсумок">
+      <div class="summary-container">
+        <h2>Підсумок вибору</h2>
+
+        <mat-card class="summary-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>source</mat-icon>
+              Джерело даних
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p><strong>Назва:</strong> {{ selectedSource?.name }}</p>
+            <p><strong>ID:</strong> {{ selectedSource?.id }}</p>
+            <p><strong>Вміст:</strong> {{ selectedSource?.content }}</p>
+          </mat-card-content>
+        </mat-card>
+
+        <div class="arrow-container">
+          <mat-icon class="arrow-icon">arrow_downward</mat-icon>
+        </div>
+
+        <mat-card class="summary-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>output</mat-icon>
+              Приймач даних
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p><strong>Назва:</strong> {{ selectedSink?.name }}</p>
+            <p><strong>ID:</strong> {{ selectedSink?.id }}</p>
+            <p><strong>Вміст:</strong> {{ selectedSink?.content }}</p>
+          </mat-card-content>
+        </mat-card>
+
+        <div *ngIf="submitSuccess" class="success-message">
+          <mat-card class="message-card success">
+            <mat-icon>check_circle</mat-icon>
+            <p>Пару успішно відправлено на сервер!</p>
+          </mat-card>
+        </div>
+
+        <div *ngIf="submitError" class="error-message">
+          <mat-card class="message-card error">
+            <mat-icon>error</mat-icon>
+            <p>Помилка при відправці даних. Спробуйте ще раз.</p>
+          </mat-card>
+        </div>
+
+        <div class="step-actions">
+          <button mat-button matStepperPrevious [disabled]="loading">Назад</button>
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="submitPair()"
+            [disabled]="loading || submitSuccess">
+            <mat-spinner *ngIf="loading" diameter="20" class="button-spinner"></mat-spinner>
+            <span *ngIf="!loading">Відправити на сервер</span>
+          </button>
+          <button
+            mat-raised-button
+            color="warn"
+            (click)="reset(); stepper.reset()"
+            [disabled]="loading">
+            Почати спочатку
+          </button>
+        </div>
+      </div>
+    </mat-step>
+
+  </mat-stepper>
+</div>
