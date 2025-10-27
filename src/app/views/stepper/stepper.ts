@@ -33,6 +33,7 @@ import {DataService} from '../../services/data-service';
 export class StepperComponent implements OnInit {
   firstFormGroup!: FormGroup;
   secondFormGroup!: FormGroup;
+  thirdFormGroup!: FormGroup;
 
   allItems: DataItem[] = [];
   sources: DataItem[] = [];
@@ -50,6 +51,7 @@ export class StepperComponent implements OnInit {
   loading = false;
   submitSuccess = false;
   submitError = false;
+  serverResponse: any = null;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -64,6 +66,8 @@ export class StepperComponent implements OnInit {
     this.secondFormGroup = this.formBuilder.group({
       sinkCtrl: ['', Validators.required]
     });
+
+    this.thirdFormGroup = this.formBuilder.group({});
 
     this.loadData();
   }
@@ -121,6 +125,7 @@ export class StepperComponent implements OnInit {
       this.dataService.submitPair(this.selectedSource.id, this.selectedSink.id).subscribe({
         next: (response) => {
           console.log('Успішно відправлено:', response);
+          this.serverResponse = response;
           this.submitSuccess = true;
           this.loading = false;
         },
@@ -142,7 +147,9 @@ export class StepperComponent implements OnInit {
     this.filteredSinks = [...this.sinks];
     this.firstFormGroup.reset();
     this.secondFormGroup.reset();
+    this.thirdFormGroup.reset();
     this.submitSuccess = false;
     this.submitError = false;
+    this.serverResponse = null;
   }
 }
