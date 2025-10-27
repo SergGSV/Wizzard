@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {DataItem} from '../../interfaces/data-item';
 import {DataService} from '../../services/data-service';
+import {CallStackVisualizationComponent} from './call-stack-visualiazation/call-stack-visualization.component';
 
 @Component({
   selector: 'app-stepper',
@@ -25,7 +26,8 @@ import {DataService} from '../../services/data-service';
     MatListModule,
     MatCardModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    CallStackVisualizationComponent
   ],
   templateUrl: './stepper.html',
   styleUrls: ['./stepper.css']
@@ -122,19 +124,23 @@ export class StepperComponent implements OnInit {
       this.submitSuccess = false;
       this.submitError = false;
 
-      this.dataService.submitPair(this.selectedSource.id, this.selectedSink.id).subscribe({
-        next: (response) => {
-          console.log('Успішно відправлено:', response);
-          this.serverResponse = response;
-          this.submitSuccess = true;
-          this.loading = false;
-        },
-        error: (error) => {
-          console.error('Помилка відправки:', error);
-          this.submitError = true;
-          this.loading = false;
-        }
-      });
+      // this.dataService.submitPair(this.selectedSource.id, this.selectedSink.id).subscribe({
+      //   next: (response) => {
+      //     console.log('Успішно відправлено:', response);
+      //     this.serverResponse = response;
+      //     this.submitSuccess = true;
+      //     this.loading = false;
+      //   },
+      //   error: (error) => {
+      //     console.error('Помилка відправки:', error);
+      //     this.submitError = true;
+      //     this.loading = false;
+      //   }
+      // });
+
+      this.serverResponse = '!!!';
+      this.loading = false;
+      this.submitSuccess = true;
     }
   }
 
