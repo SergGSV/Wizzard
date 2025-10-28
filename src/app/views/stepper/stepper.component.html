@@ -1,5 +1,5 @@
 <div class="stepper-container">
-  <mat-stepper [linear]="true" #stepper>
+  <mat-stepper [linear]="false" #stepper>
 
     <!-- Крок 1: Вибір Source -->
     <mat-step [stepControl]="firstFormGroup" label="Оберіть джерело">
@@ -20,22 +20,16 @@
           <mat-spinner diameter="50"></mat-spinner>
         </div>
 
-        <mat-selection-list
-          *ngIf="!loading"
-          [multiple]="false"
-          class="item-list">
-          <mat-list-option
+        <div class="items-container" *ngIf="!loading">
+          <div
             *ngFor="let source of filteredSources"
-            [selected]="selectedSource?.id === source.id"
-            (click)="selectSource(source)"
-            class="list-item">
-            <div class="item-content">
-              <h3>{{ source.name }}</h3>
-              <p>{{ source.content }}</p>
-              <span class="item-id">ID: {{ source.id }}</span>
-            </div>
-          </mat-list-option>
-        </mat-selection-list>
+            class="item-card"
+            [class.selected]="selectedSource?.id === source.id"
+            (click)="selectSource(source)">
+            <div class="item-header">{{ source.name }}</div>
+            <div class="item-path">{{ source.content }}</div>
+          </div>
+        </div>
 
         <div *ngIf="!loading && filteredSources.length === 0" class="no-results">
           <p>Не знайдено жодного джерела за вашим запитом</p>
@@ -75,21 +69,16 @@
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
 
-        <mat-selection-list
-          [multiple]="false"
-          class="item-list">
-          <mat-list-option
+        <div class="items-container">
+          <div
             *ngFor="let sink of filteredSinks"
-            [selected]="selectedSink?.id === sink.id"
-            (click)="selectSink(sink)"
-            class="list-item">
-            <div class="item-content">
-              <h3>{{ sink.name }}</h3>
-              <p>{{ sink.content }}</p>
-              <span class="item-id">ID: {{ sink.id }}</span>
-            </div>
-          </mat-list-option>
-        </mat-selection-list>
+            class="item-card"
+            [class.selected]="selectedSink?.id === sink.id"
+            (click)="selectSink(sink)">
+            <div class="item-header">{{ sink.name }}</div>
+            <div class="item-path">{{ sink.content }}</div>
+          </div>
+        </div>
 
         <div *ngIf="filteredSinks.length === 0" class="no-results">
           <p>Не знайдено жодного приймача за вашим запитом</p>
@@ -165,7 +154,6 @@
             mat-raised-button
             color="accent"
             (click)="submitPair()"
-            matStepperNext
             [disabled]="loading || submitSuccess">
             <mat-spinner *ngIf="loading" diameter="20" class="button-spinner"></mat-spinner>
             <span *ngIf="!loading">Відправити на сервер</span>
@@ -191,8 +179,7 @@
             <mat-card-title>Відповідь сервера</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-<!--            <pre class="json-response">{{ serverResponse | json }}</pre>-->
-            <app-call-stack-visualization></app-call-stack-visualization>
+            <pre class="json-response">{{ serverResponse | json }}</pre>
           </mat-card-content>
         </mat-card>
 
@@ -218,7 +205,6 @@
         </mat-card>
 
         <div class="step-actions">
-          <button mat-button matStepperPrevious>Назад</button>
           <button
             mat-raised-button
             color="warn"

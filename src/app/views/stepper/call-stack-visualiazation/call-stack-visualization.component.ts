@@ -1,10 +1,12 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import * as echarts from 'echarts';
+import type { ECharts } from 'echarts';
 
 interface FlowNode {
   id: number;
@@ -22,6 +24,7 @@ interface FlowNode {
 
 @Component({
   selector: 'app-call-stack-visualization',
+  standalone: true,
   imports: [
     CommonModule,
     MatCardModule,
@@ -30,13 +33,14 @@ interface FlowNode {
     MatExpansionModule
   ],
   templateUrl: './call-stack-visualization.component.html',
-  styleUrl: './call-stack-visualization.component.css',
+  styleUrls: ['./call-stack-visualization.component.scss']
 })
-export class CallStackVisualizationComponent implements OnInit, AfterViewInit {
+export class CallStackVisualizationComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartContainer', { static: false }) chartContainer!: ElementRef;
 
   selectedNodeId: number | null = null;
-  chart: any;
+  chart: ECharts | null = null;
+  private resizeObserver: ResizeObserver | null = null;
 
   flowData = {
     id: 'flow-001',
@@ -100,148 +104,161 @@ export class CallStackVisualizationComponent implements OnInit, AfterViewInit {
   };
 
   ngOnInit() {
-    // Ініціалізація компонента
+    // Component initialization
   }
 
   ngAfterViewInit() {
     this.initChart();
+    this.setupResizeObserver();
+  }
+
+  ngOnDestroy() {
+    if (this.chart) {
+      this.chart.dispose();
+    }
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+  }
+
+  private setupResizeObserver() {
+    this.resizeObserver = new ResizeObserver(() => {
+      this.chart?.resize();
+    });
+
+    if (this.chartContainer?.nativeElement) {
+      this.resizeObserver.observe(this.chartContainer.nativeElement);
+    }
   }
 
   initChart() {
+    if (!this.chartContainer?.nativeElement) return;
+
     this.chart = echarts.init(this.chartContainer.nativeElement);
+
+    const spacing = 100;
+    const startY = 60;
 
     const nodes = this.flowData.nodes.map((node, index) => ({
       id: node.id.toString(),
       name: node.name,
-      x: 400,
-      y: index * 120 + 50,
-      symbolSize: 80,
+      x: 250,
+      y: startY + index * spacing,
+      symbolSize: 70,
       itemStyle: {
         color: this.getNodeColor(node.type),
-        borderWidth: 4,
+        borderWidth: 3,
         borderColor: '#fff',
-        shadowBlur: 10,
-        shadowColor: 'rgba(0, 0, 0, 0.3)'
+        shadowBlur: 8,
+        shadowColor: 'rgba(0, 0, 0, 0.2)'
       },
       label: {
         show: true,
-        formatter: `{name|${node.name}}\n{location|${node.location}}`,
+        formatter: '{name|}',
         rich: {
           name: {
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: 'bold',
-            fontFamily: 'Courier New',
+            fontFamily: 'Courier New, monospace',
             color: '#fff',
-            padding: [0, 0, 5, 0]
-          },
-          location: {
-            fontSize: 10,
-            color: 'rgba(255, 255, 255, 0.8)',
-            fontFamily: 'Roboto'
+            align: 'center'
           }
-        }
+        },
+        position: 'inside'
       },
-      category: node.type
+      emphasis: {
+        scale: 1.15,
+        itemStyle: {
+          borderWidth: 5,
+          shadowBlur: 15
+        }
+      }
     }));
 
     const links = this.flowData.nodes.slice(0, -1).map((node, index) => ({
       source: node.id.toString(),
       target: this.flowData.nodes[index + 1].id.toString(),
       lineStyle: {
-        color: '#bdbdbd',
-        width: 3,
+        color: '#90a4ae',
+        width: 2.5,
         type: 'solid',
         curveness: 0
       },
-      label: {
-        show: true,
-        formatter: 'tainted data flows',
-        fontSize: 10,
-        color: '#9e9e9e'
+      emphasis: {
+        lineStyle: {
+          width: 4,
+          color: '#607d8b'
+        }
       }
     }));
 
     const option = {
-      title: {
-        text: 'Data Flow Visualization',
-        left: 'center',
-        top: 10,
-        textStyle: {
-          fontSize: 18,
-          fontWeight: 'bold',
-          color: '#333'
-        }
-      },
       tooltip: {
         trigger: 'item',
         formatter: (params: any) => {
           if (params.dataType === 'node') {
             const node = this.flowData.nodes[params.dataIndex];
             return `
-              <div style="padding: 8px;">
-                <strong>${node.name}</strong><br/>
-                <span style="color: #757575;">${node.location}</span><br/>
-                <span style="color: #1976d2;">${node.badge}</span>
+              <div style="padding: 8px; max-width: 300px;">
+                <strong style="font-family: 'Courier New', monospace;">${node.name}</strong><br/>
+                <span style="color: #757575; font-size: 12px;">${node.location}</span><br/>
+                <span style="color: ${this.getNodeColor(node.type)}; font-size: 11px; font-weight: 600; margin-top: 4px; display: inline-block;">${node.badge}</span>
               </div>
             `;
           }
           return '';
+        },
+        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+        borderColor: '#e0e0e0',
+        borderWidth: 1,
+        textStyle: {
+          color: '#333'
         }
       },
-      series: [
-        {
-          type: 'graph',
-          layout: 'none',
-          coordinateSystem: null,
-          symbolSize: 80,
-          roam: true,
-          label: {
-            show: true,
-            position: 'inside'
-          },
-          edgeSymbol: ['none', 'arrow'],
-          edgeSymbolSize: [0, 15],
-          data: nodes,
-          links: links,
-          lineStyle: {
-            opacity: 0.9,
-            width: 3,
-            curveness: 0
-          },
-          emphasis: {
-            focus: 'adjacency',
-            lineStyle: {
-              width: 5
-            },
-            itemStyle: {
-              borderWidth: 6
-            }
-          }
-        }
-      ]
+      series: [{
+        type: 'graph',
+        layout: 'none',
+        coordinateSystem: null,
+        symbolSize: 70,
+        roam: false,
+        label: {
+          show: true
+        },
+        edgeSymbol: ['none', 'arrow'],
+        edgeSymbolSize: [0, 12],
+        data: nodes,
+        links: links,
+        lineStyle: {
+          opacity: 0.85,
+          width: 2.5
+        },
+        emphasis: {
+          focus: 'adjacency',
+          scale: true
+        },
+        animation: true,
+        animationDuration: 800,
+        animationEasing: 'cubicOut'
+      }]
     };
 
     this.chart.setOption(option);
 
     this.chart.on('click', (params: any) => {
       if (params.dataType === 'node') {
-        this.selectNode(params.data.id);
+        this.selectNode(parseInt(params.data.id));
       }
-    });
-
-    window.addEventListener('resize', () => {
-      this.chart?.resize();
     });
   }
 
-  selectNode(nodeId: number | string) {
-    this.selectedNodeId = typeof nodeId === 'string' ? parseInt(nodeId) : nodeId;
+  selectNode(nodeId: number) {
+    this.selectedNodeId = nodeId;
 
     if (this.chart) {
       this.chart.dispatchAction({
         type: 'highlight',
         seriesIndex: 0,
-        dataIndex: this.selectedNodeId - 1
+        dataIndex: nodeId - 1
       });
     }
   }
@@ -258,7 +275,7 @@ export class CallStackVisualizationComponent implements OnInit, AfterViewInit {
     switch (type) {
       case 'source': return '#1976d2';
       case 'sink': return '#d32f2f';
-      default: return '#9e9e9e';
+      default: return '#757575';
     }
   }
 }

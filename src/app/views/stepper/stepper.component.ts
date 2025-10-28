@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatStepperModule } from '@angular/material/stepper';
+import { MatStepperModule, MatStepper } from '@angular/material/stepper';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,7 +11,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {DataItem} from '../../interfaces/data-item';
 import {DataService} from '../../services/data-service';
-import {CallStackVisualizationComponent} from './call-stack-visualiazation/call-stack-visualization.component';
 
 @Component({
   selector: 'app-stepper',
@@ -26,13 +25,14 @@ import {CallStackVisualizationComponent} from './call-stack-visualiazation/call-
     MatListModule,
     MatCardModule,
     MatIconModule,
-    MatProgressSpinnerModule,
-    CallStackVisualizationComponent
+    MatProgressSpinnerModule
   ],
-  templateUrl: './stepper.html',
-  styleUrls: ['./stepper.css']
+  templateUrl: './stepper.component.html',
+  styleUrls: ['./stepper.component.css']
 })
 export class StepperComponent implements OnInit {
+  @ViewChild('stepper') stepper!: MatStepper;
+
   firstFormGroup!: FormGroup;
   secondFormGroup!: FormGroup;
   thirdFormGroup!: FormGroup;
@@ -124,23 +124,20 @@ export class StepperComponent implements OnInit {
       this.submitSuccess = false;
       this.submitError = false;
 
-      // this.dataService.submitPair(this.selectedSource.id, this.selectedSink.id).subscribe({
-      //   next: (response) => {
-      //     console.log('Успішно відправлено:', response);
-      //     this.serverResponse = response;
-      //     this.submitSuccess = true;
-      //     this.loading = false;
-      //   },
-      //   error: (error) => {
-      //     console.error('Помилка відправки:', error);
-      //     this.submitError = true;
-      //     this.loading = false;
-      //   }
-      // });
-
-      this.serverResponse = '!!!';
-      this.loading = false;
-      this.submitSuccess = true;
+      this.dataService.submitPair(this.selectedSource.id, this.selectedSink.id).subscribe({
+        next: (response) => {
+          console.log('Успішно відправлено:', response);
+          this.serverResponse = response;
+          this.submitSuccess = true;
+          this.loading = false;
+          this.stepper.next();
+        },
+        error: (error) => {
+          console.error('Помилка відправки:', error);
+          this.submitError = true;
+          this.loading = false;
+        }
+      });
     }
   }
 
