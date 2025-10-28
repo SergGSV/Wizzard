@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {DataItem} from '../../interfaces/data-item';
 import {DataService} from '../../services/data-service';
+import {CallStackVisualizationComponent} from './call-stack-visualiazation/call-stack-visualization.component';
 
 @Component({
   selector: 'app-stepper',
@@ -25,7 +26,8 @@ import {DataService} from '../../services/data-service';
     MatListModule,
     MatCardModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    CallStackVisualizationComponent
   ],
   templateUrl: './stepper.component.html',
   styleUrls: ['./stepper.component.css']

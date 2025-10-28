@@ -1,10 +1,8 @@
-
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
-import { MatExpansionModule } from '@angular/material/expansion';
 import * as echarts from 'echarts';
 import type { ECharts } from 'echarts';
 
@@ -29,8 +27,7 @@ interface FlowNode {
     CommonModule,
     MatCardModule,
     MatChipsModule,
-    MatIconModule,
-    MatExpansionModule
+    MatIconModule
   ],
   templateUrl: './call-stack-visualization.component.html',
   styleUrls: ['./call-stack-visualization.component.scss']
@@ -39,6 +36,7 @@ export class CallStackVisualizationComponent implements OnInit, AfterViewInit, O
   @ViewChild('chartContainer', { static: false }) chartContainer!: ElementRef;
 
   selectedNodeId: number | null = null;
+  selectedNode: FlowNode | null = null;
   chart: ECharts | null = null;
   private resizeObserver: ResizeObserver | null = null;
 
@@ -104,12 +102,17 @@ export class CallStackVisualizationComponent implements OnInit, AfterViewInit, O
   };
 
   ngOnInit() {
-    // Component initialization
+    // Select first node by default
+    if (this.flowData.nodes.length > 0) {
+      this.selectNode(this.flowData.nodes[0].id);
+    }
   }
 
   ngAfterViewInit() {
-    this.initChart();
-    this.setupResizeObserver();
+    if (this.flowData.nodes.length > 0) {
+      this.initChart();
+      this.setupResizeObserver();
+    }
   }
 
   ngOnDestroy() {
@@ -142,9 +145,9 @@ export class CallStackVisualizationComponent implements OnInit, AfterViewInit, O
     const nodes = this.flowData.nodes.map((node, index) => ({
       id: node.id.toString(),
       name: node.name,
-      x: 250,
+      x: 225,
       y: startY + index * spacing,
-      symbolSize: 70,
+      symbolSize: 60,
       itemStyle: {
         color: this.getNodeColor(node.type),
         borderWidth: 3,
@@ -157,7 +160,7 @@ export class CallStackVisualizationComponent implements OnInit, AfterViewInit, O
         formatter: '{name|}',
         rich: {
           name: {
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: 'bold',
             fontFamily: 'Courier New, monospace',
             color: '#fff',
@@ -167,10 +170,10 @@ export class CallStackVisualizationComponent implements OnInit, AfterViewInit, O
         position: 'inside'
       },
       emphasis: {
-        scale: 1.15,
+        scale: 1.1,
         itemStyle: {
-          borderWidth: 5,
-          shadowBlur: 15
+          borderWidth: 4,
+          shadowBlur: 12
         }
       }
     }));
@@ -199,47 +202,49 @@ export class CallStackVisualizationComponent implements OnInit, AfterViewInit, O
           if (params.dataType === 'node') {
             const node = this.flowData.nodes[params.dataIndex];
             return `
-              <div style="padding: 8px; max-width: 300px;">
-                <strong style="font-family: 'Courier New', monospace;">${node.name}</strong><br/>
-                <span style="color: #757575; font-size: 12px;">${node.location}</span><br/>
-                <span style="color: ${this.getNodeColor(node.type)}; font-size: 11px; font-weight: 600; margin-top: 4px; display: inline-block;">${node.badge}</span>
+              <div style="padding: 6px; max-width: 280px;">
+                <strong style="font-family: 'Courier New', monospace; font-size: 13px; color: #37474f;">${node.name}</strong><br/>
+                <span style="color: #78909c; font-size: 11px;">${node.location}</span><br/>
+                <span style="color: ${this.getNodeColor(node.type)}; font-size: 10px; font-weight: 600; margin-top: 3px; display: inline-block;">${node.badge}</span>
               </div>
             `;
           }
           return '';
         },
-        backgroundColor: 'rgba(255, 255, 255, 0.98)',
-        borderColor: '#e0e0e0',
+        backgroundColor: 'rgba(255, 255, 255, 0.96)',
+        borderColor: '#cfd8dc',
         borderWidth: 1,
         textStyle: {
-          color: '#333'
+          color: '#37474f'
         }
       },
-      series: [{
-        type: 'graph',
-        layout: 'none',
-        coordinateSystem: null,
-        symbolSize: 70,
-        roam: false,
-        label: {
-          show: true
-        },
-        edgeSymbol: ['none', 'arrow'],
-        edgeSymbolSize: [0, 12],
-        data: nodes,
-        links: links,
-        lineStyle: {
-          opacity: 0.85,
-          width: 2.5
-        },
-        emphasis: {
-          focus: 'adjacency',
-          scale: true
-        },
-        animation: true,
-        animationDuration: 800,
-        animationEasing: 'cubicOut'
-      }]
+      series: [
+        {
+          type: 'graph',
+          layout: 'none',
+          coordinateSystem: null,
+          symbolSize: 60,
+          roam: false,
+          label: {
+            show: true
+          },
+          edgeSymbol: ['none', 'arrow'],
+          edgeSymbolSize: [0, 12],
+          data: nodes,
+          links: links,
+          lineStyle: {
+            opacity: 0.85,
+            width: 2.5
+          },
+          emphasis: {
+            focus: 'adjacency',
+            scale: true
+          },
+          animation: true,
+          animationDuration: 600,
+          animationEasing: 'cubicOut'
+        }
+      ]
     };
 
     this.chart.setOption(option);
@@ -253,8 +258,16 @@ export class CallStackVisualizationComponent implements OnInit, AfterViewInit, O
 
   selectNode(nodeId: number) {
     this.selectedNodeId = nodeId;
+    this.selectedNode = this.flowData.nodes.find(n => n.id === nodeId) || null;
 
     if (this.chart) {
+      // Clear previous highlights
+      this.chart.dispatchAction({
+        type: 'downplay',
+        seriesIndex: 0
+      });
+
+      // Highlight selected node
       this.chart.dispatchAction({
         type: 'highlight',
         seriesIndex: 0,
@@ -273,9 +286,9 @@ export class CallStackVisualizationComponent implements OnInit, AfterViewInit, O
 
   getNodeColor(type: string): string {
     switch (type) {
-      case 'source': return '#1976d2';
-      case 'sink': return '#d32f2f';
-      default: return '#757575';
+      case 'source': return '#78909c';
+      case 'sink': return '#546e7a';
+      default: return '#b0bec5';
     }
   }
 }

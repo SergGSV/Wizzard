@@ -1,195 +1,93 @@
-<!-- call-stack-visualization.component.html -->
 <div class="flow-container">
+  <!-- Header Section -->
   <mat-card class="flow-header-card">
-    <mat-card-header>
+    <mat-card-content>
       <div class="flow-title">
-        <mat-icon>account_tree</mat-icon>
-        <span>Data Flow: {{ flowData.id }}</span>
-        <mat-chip-set>
-          <mat-chip class="severity-chip" highlighted>{{ flowData.severity }}</mat-chip>
-        </mat-chip-set>
+        <mat-icon class="title-icon">account_tree</mat-icon>
+        <span class="title-text">Data Flow: {{ flowData.id }}</span>
+        <mat-chip class="severity-chip">{{ flowData.severity }}</mat-chip>
       </div>
       <div class="flow-summary">{{ flowData.summary }}</div>
-    </mat-card-header>
+    </mat-card-content>
   </mat-card>
 
-  <div class="visualization-wrapper">
-    <!-- ECharts Graph Visualization -->
-    <div class="chart-section">
-      <mat-card>
-        <mat-card-content>
-          <div #chartContainer class="chart-container"></div>
-        </mat-card-content>
-      </mat-card>
-    </div>
+  <!-- Main Content: Graph + Details -->
+  <div class="content-grid" *ngIf="flowData.nodes.length > 0; else noResults">
+    <!-- Left: ECharts Graph -->
+    <mat-card class="chart-card">
+      <mat-card-content class="chart-content">
+        <div #chartContainer class="chart-container"></div>
+      </mat-card-content>
+    </mat-card>
 
-    <!-- Nodes List with Details -->
-    <div class="nodes-section">
-      <mat-accordion>
-        <mat-expansion-panel
-          *ngFor="let node of flowData.nodes; let i = index"
-          [expanded]="selectedNodeId === node.id"
-          (opened)="selectNode(node.id)"
-          [class.source-panel]="node.type === 'source'"
-          [class.sink-panel]="node.type === 'sink'"
-          [class.path-panel]="node.type === 'path'">
+    <!-- Right: Selected Node Details -->
+    <mat-card class="details-card" *ngIf="selectedNode">
+      <mat-card-content class="details-content">
+        <!-- Node Header -->
+        <div class="details-header">
+          <div class="details-badge-row">
+            <mat-chip [class]="'detail-badge ' + selectedNode.type + '-badge'">
+              <mat-icon class="badge-icon">{{ getNodeIcon(selectedNode.type) }}</mat-icon>
+              <span>{{ selectedNode.badge }}</span>
+            </mat-chip>
+            <span class="details-node-number">#{{ selectedNode.id }}</span>
+          </div>
 
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <div class="node-header">
-                <mat-chip-set>
-                  <mat-chip [class]="node.type + '-badge'">
-                    <mat-icon>{{ getNodeIcon(node.type) }}</mat-icon>
-                    {{ node.badge }}
-                  </mat-chip>
-                </mat-chip-set>
-                <span class="node-number">#{{ node.id }}</span>
-              </div>
-            </mat-panel-title>
-            <mat-panel-description>
-              <div class="node-preview">
-                <mat-icon [class.dangerous]="node.vulnerable">
-                  {{ node.vulnerable ? 'warning' : 'code' }}
-                </mat-icon>
-                <div>
-                  <div class="node-name">{{ node.name }}</div>
-                  <div class="node-location">📄 {{ node.location }}</div>
-                </div>
-              </div>
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-
-          <!-- Node Details -->
-          <div class="node-details">
-            <div class="detail-row">
-              <span class="detail-label">Label:</span>
-              <span class="detail-value">{{ node.label }}</span>
+          <div class="details-title-row">
+            <div class="details-icon-wrapper" [class.dangerous]="selectedNode.vulnerable">
+              <mat-icon>{{ selectedNode.vulnerable ? 'warning' : 'code' }}</mat-icon>
             </div>
-
-            <div class="detail-row" *ngIf="node.method">
-              <span class="detail-label">Method:</span>
-              <span class="detail-value">{{ node.method }}</span>
-            </div>
-
-            <div class="detail-row" *ngIf="node.dataType">
-              <span class="detail-label">Type:</span>
-              <span class="detail-value">{{ node.dataType }}</span>
-            </div>
-
-            <div class="detail-row" *ngIf="node.returnType">
-              <span class="detail-label">Return Type:</span>
-              <span class="detail-value">{{ node.returnType }}</span>
-            </div>
-
-            <div class="detail-row">
-              <span class="detail-label">Code:</span>
-            </div>
-            <code class="code-snippet">{{ node.code }}</code>
-
-            <div class="vulnerability-warning" *ngIf="node.vulnerable">
-              <mat-icon>error</mat-icon>
-              <span>Vulnerable operation: untrusted data reaches dangerous sink!</span>
+            <div>
+              <div class="details-node-name">{{ selectedNode.name }}</div>
+              <div class="details-node-location">📄 {{ selectedNode.location }}</div>
             </div>
           </div>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </div>
-  </div>
-</div><!-- call-stack-visualization.component.html -->
-<div class="flow-container">
-  <mat-card class="flow-header-card">
-    <mat-card-header>
-      <div class="flow-title">
-        <mat-icon>account_tree</mat-icon>
-        <span>Data Flow: {{ flowData.id }}</span>
-        <mat-chip-set>
-          <mat-chip class="severity-chip" highlighted>{{ flowData.severity }}</mat-chip>
-        </mat-chip-set>
-      </div>
-      <div class="flow-summary">{{ flowData.summary }}</div>
-    </mat-card-header>
-  </mat-card>
+        </div>
 
-  <div class="visualization-wrapper">
-    <!-- ECharts Graph Visualization -->
-    <div class="chart-section">
-      <mat-card>
-        <mat-card-content>
-          <div #chartContainer class="chart-container"></div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-    <!-- Nodes List with Details -->
-    <div class="nodes-section">
-      <mat-accordion>
-        <mat-expansion-panel
-          *ngFor="let node of flowData.nodes; let i = index"
-          [expanded]="selectedNodeId === node.id"
-          (opened)="selectNode(node.id)"
-          [class.source-panel]="node.type === 'source'"
-          [class.sink-panel]="node.type === 'sink'"
-          [class.path-panel]="node.type === 'path'">
-
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <div class="node-header">
-                <mat-chip-set>
-                  <mat-chip [class]="node.type + '-badge'">
-                    <mat-icon>{{ getNodeIcon(node.type) }}</mat-icon>
-                    {{ node.badge }}
-                  </mat-chip>
-                </mat-chip-set>
-                <span class="node-number">#{{ node.id }}</span>
-              </div>
-            </mat-panel-title>
-            <mat-panel-description>
-              <div class="node-preview">
-                <mat-icon [class.dangerous]="node.vulnerable">
-                  {{ node.vulnerable ? 'warning' : 'code' }}
-                </mat-icon>
-                <div>
-                  <div class="node-name">{{ node.name }}</div>
-                  <div class="node-location">📄 {{ node.location }}</div>
-                </div>
-              </div>
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-
-          <!-- Node Details -->
-          <div class="node-details">
-            <div class="detail-row">
-              <span class="detail-label">Label:</span>
-              <span class="detail-value">{{ node.label }}</span>
-            </div>
-
-            <div class="detail-row" *ngIf="node.method">
-              <span class="detail-label">Method:</span>
-              <span class="detail-value">{{ node.method }}</span>
-            </div>
-
-            <div class="detail-row" *ngIf="node.dataType">
-              <span class="detail-label">Type:</span>
-              <span class="detail-value">{{ node.dataType }}</span>
-            </div>
-
-            <div class="detail-row" *ngIf="node.returnType">
-              <span class="detail-label">Return Type:</span>
-              <span class="detail-value">{{ node.returnType }}</span>
-            </div>
-
-            <div class="detail-row">
-              <span class="detail-label">Code:</span>
-            </div>
-            <code class="code-snippet">{{ node.code }}</code>
-
-            <div class="vulnerability-warning" *ngIf="node.vulnerable">
-              <mat-icon>error</mat-icon>
-              <span>Vulnerable operation: untrusted data reaches dangerous sink!</span>
-            </div>
+        <!-- Node Details -->
+        <div class="details-body">
+          <div class="detail-row">
+            <span class="detail-label">Label:</span>
+            <span class="detail-value">{{ selectedNode.label }}</span>
           </div>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </div>
+
+          <div class="detail-row" *ngIf="selectedNode.method">
+            <span class="detail-label">Method:</span>
+            <span class="detail-value detail-method">{{ selectedNode.method }}</span>
+          </div>
+
+          <div class="detail-row" *ngIf="selectedNode.dataType">
+            <span class="detail-label">Type:</span>
+            <span class="detail-value">{{ selectedNode.dataType }}</span>
+          </div>
+
+          <div class="detail-row" *ngIf="selectedNode.returnType">
+            <span class="detail-label">Return Type:</span>
+            <span class="detail-value">{{ selectedNode.returnType }}</span>
+          </div>
+
+          <div class="detail-row code-row">
+            <span class="detail-label">Code:</span>
+          </div>
+          <pre class="details-code">{{ selectedNode.code }}</pre>
+
+          <div class="details-warning" *ngIf="selectedNode.vulnerable">
+            <mat-icon class="warning-icon">error</mat-icon>
+            <span class="warning-text">Vulnerable operation: untrusted data reaches dangerous sink!</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
+
+  <!-- No Results Message -->
+  <ng-template #noResults>
+    <mat-card class="no-results-card">
+      <mat-card-content class="no-results-content">
+        <mat-icon class="no-results-icon">search_off</mat-icon>
+        <h3 class="no-results-title">Не знайдено відповідних результатів</h3>
+        <p class="no-results-text">Спробуйте змінити параметри пошуку</p>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
 </div>
