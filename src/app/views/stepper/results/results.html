@@ -1,0 +1,95 @@
+<!-- elements-view.component.html -->
+<div class="container">
+  <!-- Ліва частина - список елементів -->
+  <div class="left-panel">
+    <!-- Перший елемент (фіксований) -->
+    <div
+      class="element-item fixed-item"
+      [class.selected]="isSelected(firstElement)"
+      (click)="selectElement(firstElement!)"
+      *ngIf="firstElement">
+      <div class="element-content">
+        <span class="element-label">{{ getElementLabel(firstElement!, 0) }}</span>
+        <span class="element-count">{{ firstElement!.elements.length }} items</span>
+      </div>
+    </div>
+
+    <!-- Скролюваний контейнер -->
+    <div class="scrollable-container">
+      <div
+        class="element-item"
+        *ngFor="let element of scrollableElements; let i = index"
+        [class.selected]="isSelected(element)"
+        (click)="selectElement(element)">
+        <div class="element-content">
+          <span class="element-label">{{ getElementLabel(element, i + 1) }}</span>
+          <span class="element-count">{{ element.elements.length }} items</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Останній елемент (фіксований) -->
+    <div
+      class="element-item fixed-item"
+      [class.selected]="isSelected(lastElement)"
+      (click)="selectElement(lastElement!)"
+      *ngIf="lastElement && elements.length > 1">
+      <div class="element-content">
+        <span class="element-label">{{ getElementLabel(lastElement!, elements.length - 1) }}</span>
+        <span class="element-count">{{ lastElement!.elements.length }} items</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Права частина - деталі -->
+  <div class="right-panel">
+    <h3>Деталі елемента ({{ selectedElement!.elements.length }} елементів)</h3>
+    <div class="details-container" *ngIf="selectedElement">
+
+      <div class="elements-section">
+        <div class="element-card" *ngFor="let el of selectedElement.elements; let i = index">
+          <div class="element-header">
+            <span class="element-number">#{{ i + 1 }}</span>
+            <span class="element-name">{{ el.name }}</span>
+          </div>
+
+          <div class="element-body">
+            <div class="detail-row">
+              <span class="detail-label">Код:</span>
+              <span class="detail-value code">{{ el.code }}</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="detail-label">Label:</span>
+              <span class="detail-value">{{ el.label }}</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="detail-label">Файл:</span>
+              <span class="detail-value">{{ el.fileName }}</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="detail-label">Рядок:</span>
+              <span class="detail-value">{{ el.lineNumber }}</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="detail-label">Колонка:</span>
+              <span class="detail-value">{{ el.columnNumber }}</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="detail-label">Order:</span>
+              <span class="detail-value">{{ el.order }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-selection" *ngIf="!selectedElement">
+      <p>Оберіть елемент зі списку</p>
+    </div>
+  </div>
+</div>

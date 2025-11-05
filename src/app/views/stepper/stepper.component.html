@@ -165,45 +165,46 @@
     <!-- Крок 4: Результати -->
     <mat-step [stepControl]="thirdFormGroup" label="Результати">
       <div class="results-container">
-        <h2>Результати виконання</h2>
+<!--        <h2>Результати виконання</h2>-->
 
-        <div *ngIf="submitSuccess" class="success-message">
-          <mat-card class="message-card success">
-            <mat-icon>check_circle</mat-icon>
-            <p>Пару успішно відправлено на сервер!</p>
-          </mat-card>
-        </div>
+<!--        <div *ngIf="submitSuccess" class="success-message">-->
+<!--          <mat-card class="message-card success">-->
+<!--            <mat-icon>check_circle</mat-icon>-->
+<!--            <p>Пару успішно відправлено на сервер!</p>-->
+<!--          </mat-card>-->
+<!--        </div>-->
 
         <mat-card class="response-card" *ngIf="serverResponse">
-          <mat-card-header>
-            <mat-card-title>Відповідь сервера</mat-card-title>
-          </mat-card-header>
+<!--          <mat-card-header>-->
+<!--            <mat-card-title>Відповідь сервера</mat-card-title>-->
+<!--          </mat-card-header>-->
           <mat-card-content>
 <!--            <pre class="json-response">{{ serverResponse | json }}</pre>-->
-            <app-call-stack-visualization></app-call-stack-visualization>
+<!--            <app-call-stack-visualization></app-call-stack-visualization>-->
+            <app-results [elements]="filteredElements"></app-results>
           </mat-card-content>
         </mat-card>
 
-        <mat-card class="summary-info">
-          <mat-card-header>
-            <mat-card-title>Відправлена пара</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="pair-info">
-              <div class="pair-item">
-                <strong>Source ID:</strong> {{ selectedSource?.id }}
-                <br>
-                <strong>Source Name:</strong> {{ selectedSource?.name }}
-              </div>
-              <mat-icon class="arrow-right">arrow_forward</mat-icon>
-              <div class="pair-item">
-                <strong>Sink ID:</strong> {{ selectedSink?.id }}
-                <br>
-                <strong>Sink Name:</strong> {{ selectedSink?.name }}
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
+<!--        <mat-card class="summary-info">-->
+<!--          <mat-card-header>-->
+<!--            <mat-card-title>Відправлена пара</mat-card-title>-->
+<!--          </mat-card-header>-->
+<!--          <mat-card-content>-->
+<!--            <div class="pair-info">-->
+<!--              <div class="pair-item">-->
+<!--                <strong>Source ID:</strong> {{ selectedSource?.id }}-->
+<!--                <br>-->
+<!--                <strong>Source Name:</strong> {{ selectedSource?.name }}-->
+<!--              </div>-->
+<!--              <mat-icon class="arrow-right">arrow_forward</mat-icon>-->
+<!--              <div class="pair-item">-->
+<!--                <strong>Sink ID:</strong> {{ selectedSink?.id }}-->
+<!--                <br>-->
+<!--                <strong>Sink Name:</strong> {{ selectedSink?.name }}-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </mat-card-content>-->
+<!--        </mat-card>-->
 
         <div class="step-actions">
           <button

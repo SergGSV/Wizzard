@@ -12,6 +12,23 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {DataItem} from '../../interfaces/data-item';
 import {DataService} from '../../services/data-service';
 import {CallStackVisualizationComponent} from './call-stack-visualiazation/call-stack-visualization.component';
+import {Results} from './results/results';
+
+
+export interface QueryElement {
+  code: string;
+  columnNumber: number;
+  fileName: string;
+  label: string;
+  lineNumber: number;
+  name: string;
+  order: number;
+}
+
+export interface QueryResultItem {
+  elements: QueryElement[];
+}
+
 
 @Component({
   selector: 'app-stepper',
@@ -27,13 +44,18 @@ import {CallStackVisualizationComponent} from './call-stack-visualiazation/call-
     MatCardModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    CallStackVisualizationComponent
+    CallStackVisualizationComponent,
+    Results
   ],
   templateUrl: './stepper.component.html',
   styleUrls: ['./stepper.component.css']
 })
 export class StepperComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
+
+
+  filteredElements: QueryResultItem[] = [];
+
 
   firstFormGroup!: FormGroup;
   secondFormGroup!: FormGroup;
@@ -74,6 +96,12 @@ export class StepperComponent implements OnInit {
     this.thirdFormGroup = this.formBuilder.group({});
 
     this.loadData();
+
+
+    // Фільтруємо елементи з elements.length >= 2
+    this.filteredElements = this.mockData.filter(item =>
+      item.elements && item.elements.length >= 2
+    );
   }
 
   loadData(): void {
@@ -157,4 +185,151 @@ export class StepperComponent implements OnInit {
     this.submitError = false;
     this.serverResponse = null;
   }
+
+
+
+
+  mockData: QueryResultItem[] = [
+    {
+      elements: [
+        {
+          code: "pg.query(sql)",
+          columnNumber: 20,
+          fileName: "quickmed-playground-main/src/database.ts",
+          label: "CALL",
+          lineNumber: 12,
+          name: "query",
+          order: 1
+        },
+        {
+          code: "db.execute(query)",
+          columnNumber: 15,
+          fileName: "quickmed-playground-main/src/database.ts",
+          label: "FUNCTION",
+          lineNumber: 45,
+          name: "execute",
+          order: 2
+        }
+      ]
+    },
+    {
+      elements: [
+        {
+          code: "userService.findById(id)",
+          columnNumber: 10,
+          fileName: "quickmed-playground-main/src/services/user.service.ts",
+          label: "CALL",
+          lineNumber: 23,
+          name: "findById",
+          order: 1
+        },
+        {
+          code: "repository.get(userId)",
+          columnNumber: 18,
+          fileName: "quickmed-playground-main/src/services/user.service.ts",
+          label: "CALL",
+          lineNumber: 56,
+          name: "get",
+          order: 2
+        },
+        {
+          code: "cache.retrieve(key)",
+          columnNumber: 25,
+          fileName: "quickmed-playground-main/src/services/user.service.ts",
+          label: "FUNCTION",
+          lineNumber: 78,
+          name: "retrieve",
+          order: 3
+        }
+      ]
+    },
+    {
+      elements: [
+        {
+          code: "authController.login()",
+          columnNumber: 5,
+          fileName: "quickmed-playground-main/src/controllers/auth.controller.ts",
+          label: "CALL",
+          lineNumber: 89,
+          name: "login",
+          order: 1
+        }
+      ]
+    },
+    {
+      elements: [
+        {
+          code: "validator.checkEmail(email)",
+          columnNumber: 12,
+          fileName: "quickmed-playground-main/src/utils/validator.ts",
+          label: "CALL",
+          lineNumber: 34,
+          name: "checkEmail",
+          order: 1
+        },
+        {
+          code: "regex.test(pattern)",
+          columnNumber: 8,
+          fileName: "quickmed-playground-main/src/utils/validator.ts",
+          label: "FUNCTION",
+          lineNumber: 67,
+          name: "test",
+          order: 2
+        }
+      ]
+    },
+    {
+      elements: Array.from({ length: 52 }, (_, i) => ({
+        code: `api.endpoint${i + 1}()`,
+        columnNumber: 10 + i,
+        fileName: "quickmed-playground-main/src/api/endpoints.ts",
+        label: i % 3 === 0 ? "CALL" : "FUNCTION",
+        lineNumber: 100 + i * 2,
+        name: `endpoint${i + 1}`,
+        order: i + 1
+      }))
+    },
+    {
+      elements: [
+        {
+          code: "middleware.authenticate()",
+          columnNumber: 15,
+          fileName: "quickmed-playground-main/src/middleware/auth.ts",
+          label: "CALL",
+          lineNumber: 12,
+          name: "authenticate",
+          order: 1
+        },
+        {
+          code: "jwt.verify(token)",
+          columnNumber: 20,
+          fileName: "quickmed-playground-main/src/middleware/auth.ts",
+          label: "FUNCTION",
+          lineNumber: 34,
+          name: "verify",
+          order: 2
+        },
+        {
+          code: "token.decode(str)",
+          columnNumber: 18,
+          fileName: "quickmed-playground-main/src/middleware/auth.ts",
+          label: "FUNCTION",
+          lineNumber: 56,
+          name: "decode",
+          order: 3
+        }
+      ]
+    },
+    {
+      elements: Array.from({ length: 20 }, (_, i) => ({
+        code: `helper.util${i + 1}()`,
+        columnNumber: 5 + i,
+        fileName: "quickmed-playground-main/src/helpers/utils.ts",
+        label: "UTILITY",
+        lineNumber: 50 + i * 3,
+        name: `util${i + 1}`,
+        order: i + 1
+      }))
+    }
+  ];
 }
