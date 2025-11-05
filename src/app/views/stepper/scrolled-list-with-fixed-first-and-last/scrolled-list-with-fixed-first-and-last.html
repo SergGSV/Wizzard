@@ -1,0 +1,27 @@
+<div class="list-container">
+  <!-- Фіксований перший елемент -->
+  <mat-list class="fixed-top" *ngIf="items && items.length > 0">
+    <mat-list-item>
+      <span matListItemTitle>{{ items[0].title }}</span>
+      <span matListItemLine *ngIf="items[0].subtitle">{{ items[0].subtitle }}</span>
+    </mat-list-item>
+  </mat-list>
+
+  <!-- Скролюваний контент (середні елементи) -->
+  <div class="scrollable-content">
+    <mat-list *ngIf="middleItems.length > 0">
+      <mat-list-item *ngFor="let item of middleItems">
+        <span matListItemTitle>{{ item.title }}</span>
+        <span matListItemLine *ngIf="item.subtitle">{{ item.subtitle }}</span>
+      </mat-list-item>
+    </mat-list>
+  </div>
+
+  <!-- Фіксований останній елемент -->
+  <mat-list class="fixed-bottom" *ngIf="items && items.length > 1">
+    <mat-list-item>
+      <span matListItemTitle>{{ items[items.length - 1].title }}</span>
+      <span matListItemLine *ngIf="items[items.length - 1].subtitle">{{ items[items.length - 1].subtitle }}</span>
+    </mat-list-item>
+  </mat-list>
+</div>

@@ -13,6 +13,12 @@ import {DataItem} from '../../interfaces/data-item';
 import {DataService} from '../../services/data-service';
 import {CallStackVisualizationComponent} from './call-stack-visualiazation/call-stack-visualization.component';
 import {Results} from './results/results';
+import {
+  ScrolledListWithFixedFirstAndLast
+} from './scrolled-list-with-fixed-first-and-last/scrolled-list-with-fixed-first-and-last';
+import {
+  ScrolledListWithStickyFirstAndLast
+} from './scrolled-list-with-sticky-first-and-last/scrolled-list-with-sticky-first-and-last';
 
 
 export interface QueryElement {
@@ -45,7 +51,9 @@ export interface QueryResultItem {
     MatIconModule,
     MatProgressSpinnerModule,
     CallStackVisualizationComponent,
-    Results
+    Results,
+    ScrolledListWithFixedFirstAndLast,
+    ScrolledListWithStickyFirstAndLast
   ],
   templateUrl: './stepper.component.html',
   styleUrls: ['./stepper.component.css']
@@ -331,5 +339,19 @@ export class StepperComponent implements OnInit {
         order: i + 1
       }))
     }
+  ];
+
+  listItems = [
+    { title: 'Перший елемент (фіксований)', subtitle: 'Завжди зверху' },
+    { title: 'Елемент 2', subtitle: 'Скролюється' },
+    { title: 'Елемент 3', subtitle: 'Скролюється' },
+    { title: 'Елемент 4', subtitle: 'Скролюється' },
+    { title: 'Елемент 5', subtitle: 'Скролюється' },
+    { title: 'Елемент 6', subtitle: 'Скролюється' },
+    { title: 'Елемент 7', subtitle: 'Скролюється' },
+    { title: 'Елемент 8', subtitle: 'Скролюється' },
+    { title: 'Елемент 9', subtitle: 'Скролюється' },
+    { title: 'Елемент 10', subtitle: 'Скролюється' },
+    { title: 'Останній елемент (фіксований)', subtitle: 'Завжди знизу' }
   ];
 }

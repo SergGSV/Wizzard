@@ -1,0 +1,48 @@
+.list-container {
+  height: 400px; /* Фіксована висота - можна змінити */
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fixed-top {
+  flex-shrink: 0;
+  border-bottom: 2px solid #e0e0e0;
+  background-color: #f5f5f5;
+}
+
+.scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.fixed-bottom {
+  flex-shrink: 0;
+  border-top: 2px solid #e0e0e0;
+  background-color: #f5f5f5;
+}
+
+mat-list {
+  padding: 0;
+}
+
+/* Кастомізація скролбару (опціонально) */
+.scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

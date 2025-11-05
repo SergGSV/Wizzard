@@ -181,7 +181,10 @@
           <mat-card-content>
 <!--            <pre class="json-response">{{ serverResponse | json }}</pre>-->
 <!--            <app-call-stack-visualization></app-call-stack-visualization>-->
-            <app-results [elements]="filteredElements"></app-results>
+<!--            <app-results [elements]="filteredElements"></app-results>-->
+<!--            <app-scrolled-list-with-fixed-first-and-last [items]="listItems"></app-scrolled-list-with-fixed-first-and-last>-->
+            <app-scrolled-list-with-sticky-first-and-last [items]="listItems"></app-scrolled-list-with-sticky-first-and-last>
+
           </mat-card-content>
         </mat-card>
 

@@ -1,0 +1,11 @@
+<div class="list-container">
+  <mat-list>
+    <mat-list-item
+      *ngFor="let item of items; let first = first; let last = last"
+      [class.sticky-first]="first"
+      [class.sticky-last]="last">
+      <span matListItemTitle>{{ item.title }}</span>
+      <span matListItemLine *ngIf="item.subtitle">{{ item.subtitle }}</span>
+    </mat-list-item>
+  </mat-list>
+</div>

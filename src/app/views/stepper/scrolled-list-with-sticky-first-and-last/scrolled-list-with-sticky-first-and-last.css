@@ -1,0 +1,48 @@
+.list-container {
+  height: 400px; /* Фіксована висота */
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  position: relative;
+}
+
+mat-list {
+  padding: 0;
+}
+
+/* Фіксований перший елемент */
+.sticky-first {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #f5f5f5;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+/* Фіксований останній елемент */
+.sticky-last {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background-color: #f5f5f5;
+  border-top: 2px solid #e0e0e0;
+}
+
+/* Кастомізація скролбару */
+.list-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.list-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.list-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.list-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
