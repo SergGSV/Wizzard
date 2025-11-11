@@ -1,0 +1,13 @@
+<div class="code-viewer-container">
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  } @else if (error) {
+    <div class="error-container">
+      <p>{{ error }}</p>
+    </div>
+  } @else {
+    <pre class="code-container" #codeContainer><code [innerHTML]="highlightedCode" [class]="'language-' + language"></code></pre>
+  }
+</div>

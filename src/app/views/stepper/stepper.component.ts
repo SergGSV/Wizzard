@@ -19,6 +19,7 @@ import {
 import {
   ScrolledListWithStickyFirstAndLast
 } from './scrolled-list-with-sticky-first-and-last/scrolled-list-with-sticky-first-and-last';
+import {CodeViewerComponent} from './code-viewer.component/code-viewer.component';
 
 
 export interface QueryElement {
@@ -53,7 +54,8 @@ export interface QueryResultItem {
     CallStackVisualizationComponent,
     Results,
     ScrolledListWithFixedFirstAndLast,
-    ScrolledListWithStickyFirstAndLast
+    ScrolledListWithStickyFirstAndLast,
+    CodeViewerComponent
   ],
   templateUrl: './stepper.component.html',
   styleUrls: ['./stepper.component.css']

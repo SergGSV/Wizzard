@@ -183,8 +183,16 @@
 <!--            <app-call-stack-visualization></app-call-stack-visualization>-->
 <!--            <app-results [elements]="filteredElements"></app-results>-->
 <!--            <app-scrolled-list-with-fixed-first-and-last [items]="listItems"></app-scrolled-list-with-fixed-first-and-last>-->
-            <app-scrolled-list-with-sticky-first-and-last [items]="listItems"></app-scrolled-list-with-sticky-first-and-last>
 
+<!--            <app-scrolled-list-with-sticky-first-and-last [items]="listItems"></app-scrolled-list-with-sticky-first-and-last>-->
+            <div style="height: 600px; padding: 20px;">
+              <app-code-viewer
+                [filePath]="'/src/app/user-list.component.ts'"
+                [language]="'typescript'"
+                [lineNumber]="47"
+                [highlightText]="'confirm'">
+              </app-code-viewer>
+            </div>
           </mat-card-content>
         </mat-card>
 
