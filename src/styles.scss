@@ -1,0 +1,46 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+    tertiary: mat.$rose-palette,
+  ),
+  typography: (
+    plain-family: Roboto,
+    brand-family: Roboto,
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+@include mat.all-component-themes($theme);
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Roboto, sans-serif;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* You can add global styles to this file, and also import other style files */
+
+/*html, body {*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  height: 100%;*/
+/*  overflow: hidden;*/
+/*}*/
+
+/*app-root {*/
+/*  display: block;*/
+/*  height: 100%;*/
+/*}*/

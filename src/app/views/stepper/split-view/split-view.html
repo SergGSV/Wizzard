@@ -1,0 +1,17 @@
+<div class="split-container">
+  <div class="left-side">
+    <div class="header">
+      <h2>Header</h2>
+    </div>
+    <mat-list class="item-list">
+      <mat-list-item *ngFor="let item of items">
+        <span matListItemTitle>{{item.title}}</span>
+        <span matListItemLine>{{item.description}}</span>
+      </mat-list-item>
+    </mat-list>
+  </div>
+
+  <div class="right-side">
+    <pre class="code-viewer"><code [class]="'language-' + language" [innerHTML]="highlightedCode"></code></pre>
+  </div>
+</div>

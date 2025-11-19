@@ -1,0 +1,45 @@
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Видалення HTML тегів</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Текст з HTML</mat-label>
+        <textarea
+          matInput
+          [(ngModel)]="inputText"
+          rows="6"
+          placeholder="Вставте текст з HTML тегами..."></textarea>
+      </mat-form-field>
+
+      <div class="actions">
+        <button mat-raised-button color="primary" (click)="stripHtml()">
+          <mat-icon>cleaning_services</mat-icon>
+          Прибрати теги
+        </button>
+        <button mat-raised-button (click)="clear()">
+          <mat-icon>clear</mat-icon>
+          Очистити
+        </button>
+      </div>
+
+      @if (outputText()) {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Чистий текст</mat-label>
+          <textarea
+            matInput
+            [value]="outputText()"
+            rows="6"
+            readonly></textarea>
+        </mat-form-field>
+
+        <button mat-stroked-button (click)="copy()">
+          <mat-icon>content_copy</mat-icon>
+          Копіювати
+        </button>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

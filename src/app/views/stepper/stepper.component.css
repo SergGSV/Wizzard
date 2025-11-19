@@ -323,3 +323,7 @@ h2 {
     transform: rotate(90deg);
   }
 }
+
+.split-view {
+  height: 100vh
+}
