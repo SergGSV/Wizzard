@@ -27,18 +27,23 @@
         // Додаємо або використовуємо існуючий anchor
         let anchorId = h3.id;
         if (!anchorId) {
-          anchorId = text.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+          anchorId = 'header-' + text.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
           h3.id = anchorId;
         }
 
         grouped[firstLetter].push({
           text: text,
-          anchor: anchorId
+          anchor: anchorId,
+          element: h3
         });
       });
 
       // Сортуємо літери
       const letters = Object.keys(grouped).sort();
+
+      // Додаємо ID до контейнера змісту
+      const indexContainer = document.getElementById('alphabetical-index');
+      indexContainer.setAttribute('id', 'toc-index');
 
       // Будуємо HTML
       let html = '<div class="alpha-index" style="border:1px solid #ddd; padding:15px; background:#f9f9f9; margin:20px 0; border-radius:5px;">';
@@ -56,7 +61,10 @@
 
         // Сортуємо елементи в групі
         grouped[letter].sort((a,b) => a.text.localeCompare(b.text, 'uk')).forEach(item => {
-          html += `<li style="margin:5px 0;"><a href="#${item.anchor}" style="color:#0052cc; text-decoration:none;">${item.text}</a></li>`;
+          html += `<li style="margin:5px 0;">
+          <a href="#${item.anchor}" class="toc-link" data-anchor="${item.anchor}"
+             style="color:#0052cc; text-decoration:none;">${item.text}</a>
+        </li>`;
         });
 
         html += '</ul></div>';
@@ -64,8 +72,94 @@
 
       html += '</div>';
 
-      document.getElementById('alphabetical-index').innerHTML = html;
-    }, 500); // Затримка 500мс для завантаження сторінки
+      indexContainer.innerHTML = html;
+
+      // Додаємо кнопки повернення до змісту біля кожного h3
+      headers.forEach(h3 => {
+        // Перевіряємо, чи вже є кнопка
+        if (h3.querySelector('.back-to-toc')) return;
+
+        const backButton = document.createElement('a');
+        backButton.href = '#toc-index';
+        backButton.className = 'back-to-toc';
+        backButton.innerHTML = '↑ До змісту';
+        backButton.style.cssText = `
+        margin-left: 15px;
+        font-size: 12px;
+        color: #0052cc;
+        text-decoration: none;
+        padding: 3px 8px;
+        border: 1px solid #0052cc;
+        border-radius: 3px;
+        display: inline-block;
+        vertical-align: middle;
+        background: white;
+        transition: all 0.2s;
+      `;
+
+        // Hover ефект
+        backButton.addEventListener('mouseenter', function() {
+          this.style.background = '#0052cc';
+          this.style.color = 'white';
+        });
+        backButton.addEventListener('mouseleave', function() {
+          this.style.background = 'white';
+          this.style.color = '#0052cc';
+        });
+
+        h3.appendChild(backButton);
+      });
+
+      // Функція плавного скролу
+      function smoothScroll(target) {
+        const element = document.querySelector(target);
+        if (element) {
+          const offset = 80; // Відступ зверху
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }
+
+      // Обробники для посилань у змісті
+      document.querySelectorAll('.toc-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const anchor = this.getAttribute('data-anchor');
+          smoothScroll('#' + anchor);
+
+          // Оновлюємо URL без перезавантаження
+          if (history.pushState) {
+            history.pushState(null, null, '#' + anchor);
+          }
+        });
+      });
+
+      // Обробники для кнопок "До змісту"
+      document.querySelectorAll('.back-to-toc').forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          smoothScroll('#toc-index');
+
+          // Оновлюємо URL
+          if (history.pushState) {
+            history.pushState(null, null, '#toc-index');
+          }
+        });
+      });
+
+    }, 500);
   })();
 </script>
+
+<style>
+  .back-to-toc:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+</style>
 {html}
