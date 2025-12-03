@@ -1,0 +1,71 @@
+{html}
+<div id="alphabetical-index"></div>
+<script>
+  (function() {
+    // Затримка для завантаження контенту
+    setTimeout(function() {
+      // Знаходимо всі h3 на сторінці
+      const headers = Array.from(document.querySelectorAll('h3'));
+
+      if (headers.length === 0) {
+        document.getElementById('alphabetical-index').innerHTML =
+          '<p style="color:#999;">Заголовки h3 не знайдено на сторінці</p>';
+        return;
+      }
+
+      // Групуємо за першою літерою
+      const grouped = {};
+      headers.forEach(h3 => {
+        const text = h3.textContent.trim();
+        if (!text) return;
+
+        const firstLetter = text[0].toUpperCase();
+        if (!grouped[firstLetter]) {
+          grouped[firstLetter] = [];
+        }
+
+        // Додаємо або використовуємо існуючий anchor
+        let anchorId = h3.id;
+        if (!anchorId) {
+          anchorId = text.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+          h3.id = anchorId;
+        }
+
+        grouped[firstLetter].push({
+          text: text,
+          anchor: anchorId
+        });
+      });
+
+      // Сортуємо літери
+      const letters = Object.keys(grouped).sort();
+
+      // Будуємо HTML
+      let html = '<div class="alpha-index" style="border:1px solid #ddd; padding:15px; background:#f9f9f9; margin:20px 0; border-radius:5px;">';
+
+      // Літерний індекс зверху
+      html += '<div style="text-align:center; margin-bottom:20px; padding:10px; background:white; border:1px solid #ddd; border-radius:3px;">';
+      html += letters.map(l => `<strong style="padding:0 10px; font-size:18px; color:#0052cc;">${l}</strong>`).join(' | ');
+      html += '</div>';
+
+      // Групи по літерах
+      letters.forEach(letter => {
+        html += `<div style="margin-bottom:15px;">`;
+        html += `<h4 style="color:#0052cc; margin-bottom:8px; font-size:16px;">${letter}</h4>`;
+        html += '<ul style="margin-left:20px; list-style-type:disc;">';
+
+        // Сортуємо елементи в групі
+        grouped[letter].sort((a,b) => a.text.localeCompare(b.text, 'uk')).forEach(item => {
+          html += `<li style="margin:5px 0;"><a href="#${item.anchor}" style="color:#0052cc; text-decoration:none;">${item.text}</a></li>`;
+        });
+
+        html += '</ul></div>';
+      });
+
+      html += '</div>';
+
+      document.getElementById('alphabetical-index').innerHTML = html;
+    }, 500); // Затримка 500мс для завантаження сторінки
+  })();
+</script>
+{html}
