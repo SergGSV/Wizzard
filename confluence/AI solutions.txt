@@ -1,0 +1,69 @@
+Here's the information in English:
+
+**XBOW**
+
+**Title:** XBOW
+
+**URL:** https://xbow.com/
+
+**Key words:** penetration testing, web security
+
+**Usefulness:** AI-powered platform for automated penetration testing of web applications. Covers the Security Testing phase in SDL. Performs dynamic application security testing (DAST), simulates real attacks, identifies runtime vulnerabilities. Reduces time and cost of regular security assessments. Suitable for continuous security testing in CI/CD pipelines.
+
+**Restrictions:** Limited to web applications, does not cover mobile/desktop apps. Requires configuration for complex authentication scenarios. Potential false positives requiring verification. Limitations on testing production environments without proper authorization. Does not fully replace manual penetration testing for critical systems.
+
+**Summary:** AI-driven tool for automated penetration testing that mimics attacker behavior to identify vulnerabilities in web applications. Integrates into SDL at the security testing stage, providing continuous validation of security controls and detection of exploitable vulnerabilities before release.
+
+---
+
+**PentestGPT**
+
+**Title:** PentestGPT
+
+**URL:** https://arxiv.org/abs/2308.06782
+
+**Key words:** penetration testing, GPT-empowered, CLI
+
+**Usefulness:** LLM-based assistant for penetration testers with CLI interface. Assists in interactive planning and execution of pentests through natural language. Useful for SDL at the security verification stage. Accelerates vulnerability analysis, generates exploit scenarios, suggests remediation strategies. Lowers the entry barrier for junior security specialists.
+
+**Restrictions:** Academic research project, may lack production-ready implementation. Limited LLM accuracy for specific technical contexts. Requires expert verification of recommendations. Dependency on GPT model's knowledge base currency. Limitations with new/zero-day vulnerabilities. Ethical and legal constraints on use in real systems without authorization.
+
+**Summary:** Research project utilizing GPT for intelligent support of penetration testing processes via command line. Can be useful for training and prototyping security testing scenarios within SDL, but requires careful use and validation of results by experienced security professionals.
+
+
+
+Ось інформація про Corridor та CodeMender англійською:
+
+**Corridor**
+
+**Title:** Corridor
+
+**URL:** https://corridor.dev/
+
+**Key words:** coding agent, vulnerabilities detection
+
+**Usefulness:** Automated real-time code analysis during development. Detects vulnerabilities at early SDL stages, integrates with IDEs and CI/CD pipelines. Suitable for shift-left approach in security. Provides immediate feedback to developers on code security directly during the development process.
+
+**Restrictions:** Requires integration into existing development processes. Possible limitations by programming language types and frameworks. Dependency on AI model training data quality. May require configuration for specific project contexts.
+
+**Summary:** AI agent for vulnerability detection during coding that helps developers receive instant security feedback directly in the development process. Implements "security by design" principle through preventive problem detection.
+
+---
+
+**CodeMender**
+
+**Title:** CodeMender
+
+**URL:** https://deepmind.google/blog/introducing-codemender-an-ai-agent-for-code-security/
+
+**Key words:** coding agent, vulnerabilities detection, Gemini Deep Think, patch generation, static analysis, fuzzing
+
+**Usefulness:** AI platform for automatic vulnerability remediation in code. Not only detects security issues but also suggests or automatically applies patches. Reduces time between vulnerability discovery and resolution, which is critical for SDL. Combines static analysis and fuzzing approaches with AI-powered patch generation using Gemini Deep Think.
+
+**Restrictions:** Automatic fixes require mandatory code review. May generate fixes that break business logic. Limitations on working with legacy code or specific frameworks. Generated patches need validation for correctness and security. Potential for introducing new issues while fixing existing ones.
+
+**Summary:** Tool for automated vulnerability remediation using AI. Accelerates the security defect fixing stage in SDL, reducing burden on security teams and developers. Leverages advanced AI capabilities for intelligent patch generation and validation.
+
+---
+
+These tools complement different SDL phases: Corridor focuses on prevention (during code writing), while CodeMender focuses on remediation (fixing identified issues).
